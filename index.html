@@ -61,7 +61,7 @@
     @keyframes border-glow { 0%,100% { border-color: rgba(242,195,107,.4) } 50% { border-color: rgba(242,195,107,.7) } }
     @keyframes wa-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(37,211,102,.5) } 50% { box-shadow: 0 0 0 14px rgba(37,211,102,0) } }
     @keyframes popup-in { from { opacity:0; transform: translateY(30px) scale(.95) } to { opacity:1; transform: translateY(0) scale(1) } }
-    @keyframes fly-plane { 0% { left: -3rem; opacity:0 } 10% { opacity:1 } 90% { opacity:1 } 100% { left: calc(100% + 3rem); opacity:0 } }
+    @keyframes dash-draw { to { stroke-dashoffset: 0 } }
     @keyframes card-shine { 0% { left: -100% } 100% { left: 200% } }
 
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease }
@@ -72,9 +72,18 @@
     .glass::before, .audience-card::before, .itin-card::before, .solution-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: linear-gradient(90deg, transparent, rgba(242,195,107,.06), transparent); pointer-events: none; z-index: 1 }
     .glass.active::before, .audience-card.active::before, .itin-card.active::before, .solution-card.active::before { animation: card-shine 1.5s ease .3s forwards }
 
-    /* ── Plane animation ── */
-    .plane-fly { position: absolute; top: -1.5rem; font-size: 1.5rem; color: var(--gold); opacity: 0; filter: drop-shadow(0 0 8px rgba(242,195,107,.5)) }
-    .plane-fly.go { animation: fly-plane 3s ease-in-out forwards }
+    /* ── Flight path ── */
+    .flight-path-wrap { position: relative; width: 100%; height: 3rem; margin-bottom: 4rem; overflow: visible }
+    .flight-path-wrap svg { width: 100%; height: 100%; overflow: visible }
+    .flight-route { fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-dasharray: 8 6; stroke-linecap: round; opacity: .4 }
+    .flight-route-draw { fill: none; stroke: var(--gold); stroke-width: 2; stroke-linecap: round; opacity: .9; filter: drop-shadow(0 0 4px rgba(242,195,107,.5)) }
+    .flight-plane { font-size: 1.3rem; fill: var(--gold); filter: drop-shadow(0 0 6px rgba(242,195,107,.6)) }
+    .flight-dot { fill: var(--gold); opacity: 0 }
+    .flight-dot.start { opacity: 1 }
+    .flight-path-wrap.go .flight-route-draw { animation: dash-draw 2.5s ease-in-out forwards }
+    .flight-path-wrap.go .flight-dot { animation: .3s ease forwards; animation-delay: 2.4s }
+    @keyframes dot-in { to { opacity: 1 } }
+    .flight-path-wrap.go .flight-dot.end { animation-name: dot-in }
 
     /* ── Scroll Progress ── */
     #scroll-bar { position: fixed; top: 0; left: 0; height: 2px; z-index: 999; background: var(--gold); width: 0; transition: width .1s linear }
@@ -447,9 +456,15 @@
   <!-- Steps -->
   <section class="section-lg" id="proceso" style="scroll-margin-top:5rem">
     <div style="max-width:72rem; margin:0 auto">
-      <div style="position:relative">
-        <h2 class="serif reveal text-center" id="steps-title" style="font-size:clamp(2rem,4vw,3rem); font-weight:700; margin-bottom:6rem">El camino al <span class="shimmer" style="font-style:italic">paraíso</span></h2>
-        <span class="plane-fly icon icon-fill" id="plane">flight</span>
+      <h2 class="serif reveal text-center" id="steps-title" style="font-size:clamp(2rem,4vw,3rem); font-weight:700; margin-bottom:1.5rem">El camino al <span class="shimmer" style="font-style:italic">paraíso</span></h2>
+      <div class="flight-path-wrap" id="flight-path">
+        <svg viewBox="0 0 800 50" preserveAspectRatio="none">
+          <path id="flight-route" class="flight-route" d="M 30,40 C 200,0 350,50 500,15 S 700,45 770,20" />
+          <path id="flight-route-draw" class="flight-route-draw" d="M 30,40 C 200,0 350,50 500,15 S 700,45 770,20" />
+          <circle class="flight-dot start" cx="30" cy="40" r="4" />
+          <circle class="flight-dot end" cx="770" cy="20" r="4" />
+          <text class="flight-plane" id="flight-plane" x="30" y="40" text-anchor="middle" dominant-baseline="central">✈</text>
+        </svg>
       </div>
       <div class="steps-grid">
         <div class="step reveal"><span class="step-num serif">01</span><div class="step-content"><h4 class="serif">La Entrevista</h4><p>Escuchamos tus deseos y entendemos tu estilo para crear la base de tu aventura.</p></div></div>
@@ -749,17 +764,40 @@
       });
     });
 
-    // Plane animation
-    var planeObs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (e.isIntersecting) {
-          document.getElementById('plane').classList.add('go');
+    // Flight path animation
+    (function() {
+      var wrap = document.getElementById('flight-path');
+      var route = document.getElementById('flight-route-draw');
+      var plane = document.getElementById('flight-plane');
+      var routePath = document.getElementById('flight-route');
+      if (!wrap || !route || !plane) return;
+
+      var len = route.getTotalLength();
+      route.style.strokeDasharray = len;
+      route.style.strokeDashoffset = len;
+
+      var planeObs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (!e.isIntersecting) return;
+          wrap.classList.add('go');
+
+          // Animate plane along path
+          var start = null, duration = 2500;
+          function step(ts) {
+            if (!start) start = ts;
+            var t = Math.min((ts - start) / duration, 1);
+            var ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+            var pt = routePath.getPointAtLength(ease * routePath.getTotalLength());
+            plane.setAttribute('x', pt.x);
+            plane.setAttribute('y', pt.y);
+            if (t < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
           planeObs.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.5 });
-    var stepsTitle = document.getElementById('steps-title');
-    if (stepsTitle) planeObs.observe(stepsTitle);
+        });
+      }, { threshold: 0.3 });
+      planeObs.observe(wrap);
+    })();
 
     // Card shine on reveal
     var shineObs = new IntersectionObserver(function(entries) {
