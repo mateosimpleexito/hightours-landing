@@ -90,7 +90,9 @@
     /* ── Hero ── */
     .hero { position: relative; min-height: 100vh; display: flex; align-items: center; padding: 8rem 2rem 3rem; overflow: hidden }
     .hero-bg { position: absolute; inset: 0; z-index: 0 }
-    .hero-bg img { width: 100%; height: 100%; object-fit: cover }
+    .hero-bg img, .hero-bg video { width: 100%; height: 100%; object-fit: cover }
+    .hero-bg video { display: none }
+    @media(min-width:769px) { .hero-bg video.loaded { display: block } .hero-bg video.loaded + img { display: none } }
     .hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top,var(--bg),rgba(7,19,37,.5),rgba(7,19,37,.3)), linear-gradient(to right,var(--bg),transparent,transparent) }
     .hero-content { position: relative; z-index: 2; max-width: 80rem; margin: 0 auto; width: 100% }
     .hero h1 { font-size: clamp(2.5rem,6vw,4rem); line-height: 1.05; font-weight: 700; margin-bottom: .75rem; letter-spacing: -.03em }
@@ -332,6 +334,9 @@
   <!-- Hero -->
   <header class="hero" id="inicio">
     <div class="hero-bg">
+      <video muted loop playsinline preload="none" id="hero-vid">
+        <source src="hero.mp4" type="video/mp4" />
+      </video>
       <img src="https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?q=80&w=1400&auto=format&fit=crop" alt="Luxury travel" fetchpriority="high" />
     </div>
     <div class="hero-content reveal active">
@@ -722,6 +727,16 @@
     // Auto popup after 40s
     var popupShown = false;
     setTimeout(function() { if (!popupShown) { popupShown = true; openPopup(); } }, 40000);
+
+    // Hero video — desktop only, after page load
+    if (window.innerWidth > 768) {
+      window.addEventListener('load', function() {
+        var v = document.getElementById('hero-vid');
+        v.preload = 'auto';
+        v.load();
+        v.addEventListener('canplay', function() { v.classList.add('loaded'); v.play(); }, { once: true });
+      });
+    }
   </script>
 </body>
 </html>
