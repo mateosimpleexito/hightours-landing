@@ -61,9 +61,20 @@
     @keyframes border-glow { 0%,100% { border-color: rgba(242,195,107,.4) } 50% { border-color: rgba(242,195,107,.7) } }
     @keyframes wa-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(37,211,102,.5) } 50% { box-shadow: 0 0 0 14px rgba(37,211,102,0) } }
     @keyframes popup-in { from { opacity:0; transform: translateY(30px) scale(.95) } to { opacity:1; transform: translateY(0) scale(1) } }
+    @keyframes fly-plane { 0% { left: -3rem; opacity:0 } 10% { opacity:1 } 90% { opacity:1 } 100% { left: calc(100% + 3rem); opacity:0 } }
+    @keyframes card-shine { 0% { left: -100% } 100% { left: 200% } }
 
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease }
     .reveal.active { opacity: 1; transform: translateY(0) }
+
+    /* ── Card shine effect ── */
+    .glass, .audience-card, .itin-card, .solution-card, .testi-card { position: relative; overflow: hidden }
+    .glass::before, .audience-card::before, .itin-card::before, .solution-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: linear-gradient(90deg, transparent, rgba(242,195,107,.06), transparent); pointer-events: none; z-index: 1 }
+    .glass.active::before, .audience-card.active::before, .itin-card.active::before, .solution-card.active::before { animation: card-shine 1.5s ease .3s forwards }
+
+    /* ── Plane animation ── */
+    .plane-fly { position: absolute; top: -1.5rem; font-size: 1.5rem; color: var(--gold); opacity: 0; filter: drop-shadow(0 0 8px rgba(242,195,107,.5)) }
+    .plane-fly.go { animation: fly-plane 3s ease-in-out forwards }
 
     /* ── Scroll Progress ── */
     #scroll-bar { position: fixed; top: 0; left: 0; height: 2px; z-index: 999; background: var(--gold); width: 0; transition: width .1s linear }
@@ -436,7 +447,10 @@
   <!-- Steps -->
   <section class="section-lg" id="proceso" style="scroll-margin-top:5rem">
     <div style="max-width:72rem; margin:0 auto">
-      <h2 class="serif reveal text-center" style="font-size:clamp(2rem,4vw,3rem); font-weight:700; margin-bottom:6rem">El camino al <span class="shimmer" style="font-style:italic">paraíso</span></h2>
+      <div style="position:relative">
+        <h2 class="serif reveal text-center" id="steps-title" style="font-size:clamp(2rem,4vw,3rem); font-weight:700; margin-bottom:6rem">El camino al <span class="shimmer" style="font-style:italic">paraíso</span></h2>
+        <span class="plane-fly icon icon-fill" id="plane">flight</span>
+      </div>
       <div class="steps-grid">
         <div class="step reveal"><span class="step-num serif">01</span><div class="step-content"><h4 class="serif">La Entrevista</h4><p>Escuchamos tus deseos y entendemos tu estilo para crear la base de tu aventura.</p></div></div>
         <div class="step reveal"><span class="step-num serif">02</span><div class="step-content"><h4 class="serif">La Propuesta</h4><p>Diseñamos una experiencia a medida, optimizando cada detalle y reserva exclusiva.</p></div></div>
@@ -703,10 +717,21 @@
       tick();
     })();
 
-    // Scroll progress
+    // Scroll progress + active nav link
+    var navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    var sections = [];
+    navLinks.forEach(function(a) {
+      var s = document.querySelector(a.getAttribute('href'));
+      if (s) sections.push({ el: s, link: a });
+    });
     window.addEventListener('scroll', function() {
       var h = document.documentElement.scrollHeight - window.innerHeight;
       document.getElementById('scroll-bar').style.width = (window.scrollY / h * 100) + '%';
+      var scrollY = window.scrollY + 200;
+      sections.forEach(function(s) {
+        var inView = scrollY >= s.el.offsetTop && scrollY < s.el.offsetTop + s.el.offsetHeight;
+        s.link.classList.toggle('active', inView);
+      });
     });
 
     // Sticky CTA
@@ -723,6 +748,26 @@
         if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); closeMenu(); }
       });
     });
+
+    // Plane animation
+    var planeObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          document.getElementById('plane').classList.add('go');
+          planeObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    var stepsTitle = document.getElementById('steps-title');
+    if (stepsTitle) planeObs.observe(stepsTitle);
+
+    // Card shine on reveal
+    var shineObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add('active'); shineObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.glass, .audience-card, .itin-card, .solution-card').forEach(function(el) { shineObs.observe(el); });
 
     // Auto popup after 40s
     var popupShown = false;
