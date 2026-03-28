@@ -1,29 +1,714 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=/hightours-ghl.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>High Tours | Redirigiendo...</title>
-    <script>
-      window.location.replace('/hightours-ghl.html');
-    </script>
-    <style>
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        background: #071325;
-        color: #d7e3fc;
-        font-family: system-ui, sans-serif;
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>High Tours | Luxury Travel Curator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Manrope:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <style>
+    /* ── Reset & Variables ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    :root {
+      --gold: #f2c36b;
+      --gold-dark: #d4a853;
+      --on-gold: #412d00;
+      --bg: #071325;
+      --bg-alt: #050b16;
+      --surface: #142032;
+      --surface-hi: #1f2a3d;
+      --text: #d7e3fc;
+      --text-dim: #d2c5b2;
+      --radius: 1rem;
+      --radius-lg: 1.5rem;
+    }
+    html { scroll-behavior: smooth }
+    body { background: var(--bg); color: var(--text); font-family: 'Manrope', sans-serif; line-height: 1.6; overflow-x: hidden }
+    a { text-decoration: none; color: inherit }
+    button { border: none; background: none; cursor: pointer; font-family: inherit }
+    ul { list-style: none }
+    img { display: block; max-width: 100% }
+    .serif { font-family: 'Noto Serif', serif }
+    .icon { font-family: 'Material Symbols Outlined'; font-size: 1.1rem; vertical-align: middle }
+    .icon-fill { font-variation-settings: 'FILL' 1 }
+
+    /* ── Utilities ── */
+    .container { max-width: 80rem; margin: 0 auto; padding: 0 2rem }
+    .container-sm { max-width: 56rem; margin: 0 auto; padding: 0 2rem }
+    .container-xs { max-width: 48rem; margin: 0 auto; padding: 0 2rem }
+    .section { padding: 6rem 2rem }
+    .section-lg { padding: 10rem 2rem }
+    .text-center { text-align: center }
+    .glass { background: rgba(20,32,50,0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1) }
+    .gold-gradient { background: linear-gradient(135deg, var(--gold), var(--gold-dark)) }
+    .shimmer { background: linear-gradient(90deg, var(--gold), #fde68a, var(--gold-dark), var(--gold)); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s ease-in-out infinite; padding-right: .15em }
+    .badge { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .9rem; border-radius: 999px; font-size: .75rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; padding: 1rem 2rem; border-radius: var(--radius); font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: .08em; transition: transform .3s, box-shadow .3s }
+    .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--on-gold); animation: pulse 3s ease-in-out infinite }
+    .btn-gold:hover { transform: scale(1.05) translateY(-2px) }
+    .btn-sm { padding: .7rem 1.5rem; font-size: .85rem }
+
+    /* ── Animations ── */
+    @keyframes shimmer { 0%,100% { background-position: 0% 50% } 50% { background-position: 100% 50% } }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 20px rgba(212,168,83,.3) } 50% { box-shadow: 0 0 40px rgba(212,168,83,.5) } }
+    @keyframes marquee { to { transform: translateX(-50%) } }
+    @keyframes float { 0%,100% { transform: translateY(0) rotate(3deg) } 50% { transform: translateY(-10px) rotate(3deg) } }
+    @keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: 0 } }
+    @keyframes border-glow { 0%,100% { border-color: rgba(242,195,107,.4) } 50% { border-color: rgba(242,195,107,.7) } }
+    @keyframes wa-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(37,211,102,.5) } 50% { box-shadow: 0 0 0 14px rgba(37,211,102,0) } }
+    @keyframes popup-in { from { opacity:0; transform: translateY(30px) scale(.95) } to { opacity:1; transform: translateY(0) scale(1) } }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease }
+    .reveal.active { opacity: 1; transform: translateY(0) }
+
+    /* ── Scroll Progress ── */
+    #scroll-bar { position: fixed; top: 0; left: 0; height: 2px; z-index: 999; background: var(--gold); width: 0; transition: width .1s linear }
+
+    /* ── Nav ── */
+    nav { position: fixed; top: 0; width: 100%; z-index: 60; transition: background .4s, box-shadow .4s }
+    nav.scrolled { background: rgba(5,11,22,.95); backdrop-filter: blur(12px); box-shadow: 0 1px 12px rgba(0,0,0,.4) }
+    .nav-inner { max-width: 96rem; margin: 0 auto; padding: .75rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem }
+    .nav-logo img { height: 1.6rem; filter: brightness(0) invert(1) }
+    .nav-links { display: none; align-items: center; gap: 1.5rem }
+    .nav-links a { font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(215,227,252,.8); transition: color .3s }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold) }
+    .nav-actions { display: none; align-items: center; gap: .75rem }
+    .nav-chip { display: inline-flex; align-items: center; gap: .4rem; padding: .4rem .8rem; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); font-size: .72rem; font-weight: 700; color: rgba(215,227,252,.88); white-space: nowrap }
+    .nav-cta { padding: .6rem 1.1rem; border-radius: 999px; font-size: .78rem; font-weight: 800; color: var(--on-gold); white-space: nowrap }
+    .nav-toggle { width: 3rem; height: 3rem; border-radius: 999px; color: var(--gold); border: 1px solid rgba(242,195,107,.25); display: inline-flex; align-items: center; justify-content: center; font-size: 1.75rem }
+
+    .mobile-menu { max-height: 0; overflow: hidden; opacity: 0; transition: max-height .4s ease, opacity .3s; background: rgba(5,11,22,.95); backdrop-filter: blur(20px); padding: 0 2rem }
+    .mobile-menu.open { max-height: 80vh; opacity: 1 }
+    .mobile-menu-inner { display: flex; flex-direction: column; gap: 1rem; padding-bottom: 1.5rem }
+    .mobile-link { display: flex; align-items: center; justify-content: space-between; padding: .9rem 1rem; border-radius: var(--radius); background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); color: #fff; font-weight: 700; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase }
+    .mobile-cta { display: flex; align-items: center; justify-content: center; padding: 1rem; border-radius: 999px; font-weight: 800 }
+
+    /* ── Hero ── */
+    .hero { position: relative; min-height: 100vh; display: flex; align-items: center; padding: 8rem 2rem 3rem; overflow: hidden }
+    .hero-bg { position: absolute; inset: 0; z-index: 0 }
+    .hero-bg img { width: 100%; height: 100%; object-fit: cover }
+    .hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top,var(--bg),rgba(7,19,37,.5),rgba(7,19,37,.3)), linear-gradient(to right,var(--bg),transparent,transparent) }
+    .hero-content { position: relative; z-index: 2; max-width: 80rem; margin: 0 auto; width: 100% }
+    .hero h1 { font-size: clamp(2.5rem,6vw,4rem); line-height: 1.05; font-weight: 700; margin-bottom: .75rem; letter-spacing: -.03em }
+    .hero-sub { font-size: 1.05rem; color: var(--text-dim); margin-bottom: .5rem; max-width: 34rem; font-weight: 300 }
+    .hero-typewriter { margin-bottom: 1.25rem; font-size: .95rem; color: var(--gold); font-weight: 600; min-height: 1.5rem }
+    .hero-typewriter .cursor { display: inline-block; width: 3px; height: 1.1em; background: var(--gold); margin-left: 4px; vertical-align: text-bottom; animation: blink .8s step-end infinite }
+    .hero-proof { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap }
+    .avatar-stack { display: flex }
+    .avatar { width: 2.2rem; height: 2.2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .65rem; font-weight: 900; border: 2px solid var(--bg) }
+    .avatar + .avatar { margin-left: -.6rem }
+
+    /* ── Pain ── */
+    .pain-grid { display: grid; gap: 3rem; max-width: 80rem; margin: 0 auto }
+    .pain-card { padding: 2rem; border-radius: var(--radius); display: flex; gap: 1rem; align-items: flex-start }
+    .pain-card h4 { font-size: 1.25rem; font-weight: 700; margin-bottom: .5rem }
+    .pain-card p { color: var(--text-dim) }
+
+    /* ── Audience ── */
+    .audience-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; max-width: 56rem; margin: 0 auto }
+    .audience-card { padding: 2rem 1.5rem; border-radius: 1.25rem; text-align: center; background: rgba(20,32,50,.4); border: 1px solid rgba(255,255,255,.05); transition: border-color .3s, transform .3s }
+    .audience-card:hover { border-color: rgba(242,195,107,.3); transform: translateY(-4px) }
+
+    /* ── Marquee ── */
+    .marquee { overflow: hidden; padding: 2rem 0; border-top: 1px solid rgba(242,195,107,.08); border-bottom: 1px solid rgba(242,195,107,.08); background: rgba(5,11,22,.6) }
+    .marquee-track { display: flex; gap: 3rem; animation: marquee 25s linear infinite; width: max-content }
+    .marquee-track:hover { animation-play-state: paused }
+    .marquee-item { display: flex; align-items: center; gap: .6rem; font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(242,195,107,.7); white-space: nowrap }
+
+    /* ── Solution ── */
+    .solution-grid { display: grid; gap: 4rem; max-width: 64rem; margin: 0 auto; align-items: center }
+    .solution-cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem }
+    .solution-card { padding: 1.5rem; border-radius: 1.25rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: .75rem }
+    .solution-card .label { font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .15em }
+    .solution-icon { width: 3rem; height: 3rem; border-radius: .75rem; background: rgba(242,195,107,.08); display: flex; align-items: center; justify-content: center }
+
+    /* ── Steps ── */
+    .steps-grid { display: grid; gap: 3rem; position: relative; z-index: 2 }
+    .step { position: relative }
+    .step-num { position: absolute; top: -3rem; left: 0; font-size: clamp(5rem,12vw,8rem); font-weight: 900; color: rgba(242,195,107,.05); line-height: 1; user-select: none }
+    .step-content { position: relative; padding-top: 2rem }
+    .step h4 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem }
+    .step p { color: var(--text-dim); line-height: 1.7 }
+    .floating-card { margin-top: 2rem; padding: 1.5rem; border-radius: var(--radius); max-width: 280px; animation: float 5s ease-in-out infinite; border-color: rgba(242,195,107,.2) }
+
+    /* ── Itinerary ── */
+    .itin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; max-width: 56rem; margin: 0 auto }
+    .itin-card { padding: 1.5rem; border-radius: 1.25rem; border-color: rgba(242,195,107,.15); transition: transform .3s, border-color .3s }
+    .itin-card:hover { transform: translateY(-6px); border-color: rgba(242,195,107,.4) }
+    .day-badge { width: 2rem; height: 2rem; border-radius: 50%; background: rgba(242,195,107,.15); display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 900; color: var(--gold) }
+
+    /* ── Destinations ── */
+    .dest-carousel { display: flex; gap: 2rem; padding: 0 2rem 3rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none }
+    .dest-carousel::-webkit-scrollbar { display: none }
+    .dest-card { height: 420px; min-width: calc(50% - 1rem); position: relative; overflow: hidden; border-radius: 2.5rem; flex-shrink: 0; scroll-snap-align: center; transition: transform .5s }
+    .dest-card:hover { transform: scale(1.02) }
+    .dest-card img { width: 100%; height: 100%; object-fit: cover }
+    .dest-card .overlay { position: absolute; inset: 0; background: linear-gradient(to top,rgba(0,0,0,.8),transparent,transparent) }
+    .dest-card .info { position: absolute; bottom: 3rem; left: 3rem; right: 3rem }
+    .dest-card h4 { font-size: 2rem; color: #fff; font-weight: 700; margin-bottom: .5rem }
+    .dest-card p { color: #cbd5e1; font-size: 1.1rem; margin-bottom: 1.25rem }
+    .dest-card a { color: var(--gold); font-weight: 700; display: inline-flex; align-items: center; gap: .5rem; transition: gap .3s }
+    .dest-card a:hover { gap: 1rem }
+    .carousel-arrows { display: flex; gap: 1rem }
+    .carousel-arrows button { width: 3.5rem; height: 3.5rem; border-radius: 999px; border: 1px solid rgba(242,195,107,.2); display: flex; align-items: center; justify-content: center; color: var(--gold); transition: background .3s }
+    .carousel-arrows button:hover { background: rgba(242,195,107,.1) }
+    .progress-bar { width: 100%; height: 2px; background: var(--surface-hi); border-radius: 999px; overflow: hidden; max-width: 36rem; margin: 3rem auto 0 }
+    .progress-fill { height: 100%; background: var(--gold); border-radius: 999px; transition: width .5s; width: 25% }
+
+    /* ── Comparison ── */
+    .compare-grid { display: grid; gap: 1.25rem; max-width: 56rem; margin: 0 auto; align-items: stretch }
+    .compare-basic { padding: 2rem 1.75rem; border-radius: 1.25rem; background: #08101a; border: 1px solid rgba(255,255,255,.05); text-align: center; opacity: .75 }
+    .compare-basic li { display: flex; align-items: center; gap: .5rem; font-size: .82rem; color: #475569; font-weight: 500 }
+    .compare-premium { padding: 2rem 1.75rem; padding-top: 2.5rem; border-radius: var(--radius-lg); text-align: center; position: relative; background: linear-gradient(165deg,rgba(20,32,50,.8),rgba(242,195,107,.04)); backdrop-filter: blur(16px); border: 1px solid rgba(242,195,107,.4); animation: border-glow 3s ease-in-out infinite }
+    .compare-premium li { display: flex; align-items: center; gap: .6rem; font-size: .88rem; font-weight: 600 }
+    .compare-badge { position: absolute; top: -.75rem; right: 1.5rem; background: var(--gold); color: var(--on-gold); font-weight: 700; font-size: .55rem; padding: .35rem 1rem; border-radius: 999px; letter-spacing: .15em; text-transform: uppercase; box-shadow: 0 0 20px rgba(242,195,107,.5) }
+
+    /* ── Testimonials Marquee ── */
+    .testi-wrap { overflow: hidden; width: 100%; padding: 2rem 0; clip-path: inset(-20px -100vw -20px -100vw) }
+    .testi-track { display: flex; gap: 1.5rem; animation: marquee 35s linear infinite; width: max-content; padding: 1.5rem 0 }
+    .testi-track:hover { animation-play-state: paused }
+    .testi-card { flex-shrink: 0; width: 300px; padding: 2rem 1.5rem; border-radius: var(--radius-lg); text-align: center; background: rgba(20,32,50,.6); backdrop-filter: blur(16px); border: 1px solid rgba(242,195,107,.2); box-shadow: 0 20px 40px rgba(0,0,0,.4); transition: transform .4s, box-shadow .4s }
+    .testi-card:hover { transform: scale(1.05) translateY(-6px); box-shadow: 0 25px 50px rgba(0,0,0,.5); z-index: 10 }
+    .testi-card blockquote { font-size: 1rem; font-style: italic; line-height: 1.6; margin-bottom: 1.5rem }
+    .testi-stars { display: flex; justify-content: center; gap: .25rem; margin-bottom: 1rem; color: var(--gold) }
+
+    /* ── Stats ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; padding: 3rem 2rem; border-radius: 1.25rem; max-width: 56rem; margin: 0 auto; text-align: center; box-shadow: 0 30px 60px -20px rgba(0,0,0,.6); border-color: rgba(242,195,107,.2) }
+    .stat .num { font-size: 1.875rem; font-weight: 700; color: #fff; margin-bottom: .5rem }
+    .stat .label { font-size: .625rem; text-transform: uppercase; letter-spacing: .15em; color: var(--text-dim); font-weight: 700 }
+
+    /* ── FAQ ── */
+    .faq-item { background: rgba(20,32,50,.5); border: 1px solid rgba(255,255,255,.06); border-radius: var(--radius); overflow: hidden; transition: border-color .3s }
+    .faq-item[open] { border-color: rgba(242,195,107,.3) }
+    .faq-q { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; cursor: pointer; font-weight: 700; font-size: .95rem; list-style: none; user-select: none; transition: color .3s }
+    .faq-q::-webkit-details-marker { display: none }
+    .faq-q:hover { color: var(--gold) }
+    .faq-icon { font-size: 1.25rem; color: var(--text-dim); transition: transform .3s; flex-shrink: 0 }
+    .faq-item[open] .faq-icon { transform: rotate(180deg); color: var(--gold) }
+    .faq-a { padding: 0 1.5rem 1.25rem; font-size: .9rem; line-height: 1.7; color: var(--text-dim) }
+
+    /* ── Final CTA ── */
+    .final-cta { position: relative; padding: 10rem 2rem; min-height: 70vh; display: flex; align-items: center; justify-content: center; overflow: hidden }
+    .final-cta .bg { position: absolute; inset: 0 }
+    .final-cta .bg img { width: 100%; height: 100%; object-fit: cover }
+    .final-cta .bg::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,.8) }
+
+    /* ── Form Popup ── */
+    #form-popup { display: none; position: fixed; inset: 0; z-index: 200; align-items: center; justify-content: center; padding: 1rem }
+    #form-popup.open { display: flex }
+    .popup-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.85); backdrop-filter: blur(20px); cursor: pointer }
+    .popup-card { position: relative; z-index: 10; width: 100%; max-width: 28rem; background: linear-gradient(160deg,#142032,#0f1a2e); border: 1px solid rgba(242,195,107,.25); border-radius: var(--radius-lg); box-shadow: 0 25px 80px rgba(0,0,0,.6); overflow: hidden; animation: popup-in .4s ease }
+    .popup-card h3 { font-size: 1.35rem; font-weight: 700; color: #fff; margin-bottom: .35rem }
+    .popup-card p { font-size: .82rem; color: var(--text-dim); line-height: 1.5 }
+    .popup-close { position: absolute; top: 1rem; right: 1rem; width: 2rem; height: 2rem; border-radius: 50%; background: rgba(255,255,255,.08); color: #fff; display: flex; align-items: center; justify-content: center; z-index: 20; transition: background .2s }
+    .popup-close:hover { background: rgba(255,255,255,.15) }
+    .popup-iframe iframe { width: 100%; height: 260px; border: none; border-radius: .75rem }
+
+    /* ── WhatsApp Float ── */
+    #wa-float { position: fixed; bottom: 2rem; right: 2rem; z-index: 90; width: 4rem; height: 4rem; border-radius: 999px; background: #25d366; display: flex; align-items: center; justify-content: center; animation: wa-pulse 2s ease-in-out infinite; transition: transform .3s }
+    #wa-float:hover { transform: scale(1.15) rotate(-8deg) }
+    #wa-float svg { width: 1.75rem; height: 1.75rem; fill: #fff }
+
+    /* ── Sticky Mobile CTA ── */
+    #sticky-cta { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 55; align-items: center; justify-content: center; gap: .75rem; padding: .75rem 1rem; background: rgba(5,11,22,.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(242,195,107,.15); transform: translateY(100%); transition: transform .4s ease }
+    #sticky-cta.visible { transform: translateY(0) }
+    #sticky-cta a { flex: 1; max-width: 20rem; display: flex; align-items: center; justify-content: center; padding: .75rem 1.25rem; border-radius: .65rem; font-weight: 800; font-size: .85rem; color: var(--on-gold); text-transform: uppercase; letter-spacing: .08em }
+
+    /* ── Footer ── */
+    footer { background: var(--bg-alt); padding: 4rem 0; border-top: 1px solid rgba(255,255,255,.05) }
+    footer .inner { max-width: 96rem; margin: 0 auto; padding: 0 2rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; text-align: center }
+    footer img { height: 2.5rem; filter: brightness(0) invert(1) }
+
+    /* ── Desktop ── */
+    @media(min-width:768px) {
+      .section-lg { padding: 10rem 4rem }
+      .section { padding: 6rem 4rem }
+      .hero { padding: 8rem 4rem 3rem }
+      .pain-grid { grid-template-columns: 4fr 8fr }
+      .solution-grid { grid-template-columns: 1fr 1fr }
+      .steps-grid { grid-template-columns: repeat(3,1fr) }
+      .compare-grid { grid-template-columns: 1fr 1fr }
+      .stats-grid { grid-template-columns: repeat(4,1fr) }
+      .stat:nth-child(n+2) { border-left: 1px solid rgba(242,195,107,.3) }
+    }
+    @media(min-width:1180px) {
+      .nav-links, .nav-actions { display: flex }
+      .nav-toggle { display: none }
+    }
+    @media(max-width:1179px) {
+      .nav-links, .nav-actions { display: none }
+    }
+
+    /* ── Mobile ── */
+    @media(max-width:767px) {
+      .hero h1 { font-size: clamp(2rem,8vw,3rem) }
+      .audience-grid { grid-template-columns: 1fr }
+      .dest-card { min-width: 85vw; height: 300px }
+      .dest-card .info { bottom: 1.5rem; left: 1.5rem; right: 1.5rem }
+      .dest-card h4 { font-size: 1.5rem }
+      .testi-card { width: 260px; padding: 1.5rem 1rem }
+      .compare-premium { transform: none }
+      #wa-float { width: 3.25rem; height: 3.25rem; bottom: 5.5rem; right: 1rem }
+      #sticky-cta { display: flex }
+      .final-cta { padding: 6rem 1.5rem; min-height: auto }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll progress -->
+  <div id="scroll-bar"></div>
+
+  <!-- Form Popup -->
+  <div id="form-popup">
+    <div class="popup-overlay" onclick="closePopup()"></div>
+    <div class="popup-card">
+      <button class="popup-close" onclick="closePopup()"><span class="icon" style="font-size:1.25rem">close</span></button>
+      <div style="padding:1.5rem 1.5rem 1rem; text-align:center">
+        <h3 class="serif">Recibe tu propuesta <span class="shimmer" style="font-style:italic">personalizada</span></h3>
+        <p>Ingresa tu WhatsApp y te enviamos toda la información. Sin compromiso.</p>
+      </div>
+      <div class="popup-iframe" style="padding:0 1rem 1.5rem">
+        <iframe loading="lazy" src="https://api.leadconnectorhq.com/widget/form/jHjFRvLnEwz7wIY4GIWT"
+          data-layout="{'id':'INLINE'}" data-trigger-type="alwaysShow" data-activation-type="alwaysActivated"
+          data-deactivation-type="neverDeactivate" data-form-name="whatsapp pop" data-height="251"
+          data-layout-iframe-id="inline-jHjFRvLnEwz7wIY4GIWT" data-form-id="jHjFRvLnEwz7wIY4GIWT"
+          title="whatsapp pop"></iframe>
+      </div>
+      <div style="padding:0 1.5rem 1.25rem; text-align:center; display:flex; align-items:center; justify-content:center; gap:.5rem; font-size:.7rem; color:var(--text-dim); opacity:.7">
+        <span class="icon icon-fill" style="font-size:.85rem; color:var(--gold)">lock</span>
+        Datos protegidos · Respuesta en menos de 5 min
+      </div>
+    </div>
+  </div>
+  <script defer src="https://link.msgsndr.com/js/form_embed.js"></script>
+
+  <!-- Nav -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#inicio" class="nav-logo">
+        <img src="https://assets.cdn.filesafe.space/Svysro4eHjQk9vN7j8oe/media/69c7027d2e89d878b35b98e8.png" alt="High Tours" />
+      </a>
+      <div class="nav-links">
+        <a href="#nosotros">Nosotros</a>
+        <a href="#proceso">Proceso</a>
+        <a href="#destinos">Destinos</a>
+        <a href="#testimonios">Reseñas</a>
+      </div>
+      <div class="nav-actions">
+        <span class="nav-chip"><span class="icon icon-fill">verified</span>17 años de viajes exclusivos</span>
+        <a href="#" onclick="openPopup();return false" class="nav-cta gold-gradient">Agenda por WhatsApp</a>
+      </div>
+      <button class="nav-toggle" onclick="toggleMenu()" aria-label="Menú"><span class="icon" style="font-size:1.75rem">menu</span></button>
+    </div>
+    <div id="mobile-menu" class="mobile-menu">
+      <div class="mobile-menu-inner">
+        <a href="#nosotros" class="mobile-link" onclick="closeMenu()">Nosotros <span class="icon" style="color:var(--gold)">arrow_outward</span></a>
+        <a href="#proceso" class="mobile-link" onclick="closeMenu()">Proceso <span class="icon" style="color:var(--gold)">arrow_outward</span></a>
+        <a href="#destinos" class="mobile-link" onclick="closeMenu()">Destinos <span class="icon" style="color:var(--gold)">arrow_outward</span></a>
+        <a href="#testimonios" class="mobile-link" onclick="closeMenu()">Reseñas <span class="icon" style="color:var(--gold)">arrow_outward</span></a>
+        <a href="#" onclick="closeMenu();openPopup();return false" class="mobile-cta gold-gradient">Escribir por WhatsApp</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero" id="inicio">
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?q=80&w=1400&auto=format&fit=crop" alt="Luxury travel" fetchpriority="high" />
+    </div>
+    <div class="hero-content reveal active">
+      <div style="display:flex; align-items:center; flex-wrap:wrap; gap:.9rem; margin-bottom:1.25rem">
+        <span class="badge" style="background:rgba(255,255,255,.07); border:1px solid rgba(242,195,107,.2); color:var(--gold)"><span class="icon icon-fill">diamond</span>Agencia #1 en Perú</span>
+        <span style="font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:rgba(215,227,252,.72); font-weight:700">17 años · +5,000 viajeros felices</span>
+      </div>
+      <h1 class="serif">Viaja como <span class="shimmer" style="font-style:italic">mereces</span>.<br>Nosotros hacemos todo.</h1>
+      <p class="hero-sub">Vuelos, hoteles, restaurantes e itinerario completo. Tú solo llegas al aeropuerto.</p>
+      <div class="hero-typewriter"><span id="typewriter"></span><span class="cursor"></span></div>
+      <a href="#" onclick="openPopup();return false" class="btn btn-gold">Quiero mi viaje</a>
+      <div class="hero-proof">
+        <div class="avatar-stack">
+          <div class="avatar" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark)); color:var(--on-gold)">CR</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#afcbff,#7b9dd4); color:var(--bg)">MG</div>
+          <div class="avatar" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark)); color:var(--on-gold)">LP</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#c4b5fd,#8b5cf6); color:#fff">AS</div>
+        </div>
+        <div>
+          <div style="font-size:.78rem; color:#fff; font-weight:700">+5,000 viajeros confían en nosotros</div>
+          <div style="font-size:.68rem; color:var(--text-dim); font-weight:600; display:flex; align-items:center; gap:.3rem"><span class="icon icon-fill" style="font-size:.8rem; color:var(--gold)">verified</span>Safe Travels Certificado</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Pain -->
+  <section class="section-lg" id="nosotros" style="scroll-margin-top:5rem">
+    <div class="pain-grid">
+      <div class="reveal">
+        <h2 class="serif" style="font-size:clamp(2rem,4vw,3rem); font-weight:700; margin-bottom:1.5rem; line-height:1.2">Organizar un viaje se volvió <span class="shimmer" style="font-style:italic">agotador</span></h2>
+        <p style="color:var(--text-dim); font-size:1.125rem">El lujo no debería ser estresante ni consumir tu tiempo más valioso.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:2rem">
+        <div class="reveal"><div class="pain-card glass" style="border-left:4px solid rgba(242,195,107,.6)"><span class="icon" style="color:var(--gold); margin-top:.25rem">timer</span><div><h4>Demasiadas opciones</h4><p>Comparar mil hoteles y vuelos es agotador. ¿Habré elegido bien?</p></div></div></div>
+        <div class="reveal"><div class="pain-card glass"><span class="icon" style="color:var(--gold); margin-top:.25rem">sync_problem</span><div><h4>Sin tiempo para planificar</h4><p>El trabajo no para. El viaje queda siempre para después.</p></div></div></div>
+        <div class="reveal"><div class="pain-card glass"><span class="icon" style="color:var(--gold); margin-top:.25rem">group_off</span><div><h4>¿Y si sale mal?</h4><p>El hotel no era como en las fotos. Las vacaciones se arruinaron.</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Audience -->
+  <section class="section" style="background:rgba(5,11,22,.3); scroll-margin-top:5rem">
+    <div class="container-sm text-center">
+      <h2 class="serif reveal" style="font-size:clamp(1.5rem,3.5vw,2.25rem); font-weight:700; margin-bottom:.75rem">¿Esto es para <span class="shimmer" style="font-style:italic">ti</span>?</h2>
+      <p class="reveal" style="color:var(--text-dim); margin-bottom:2.5rem; font-size:.95rem">Si te identificas con alguno de estos perfiles, estamos hechos para ti.</p>
+    </div>
+    <div class="audience-grid">
+      <div class="reveal audience-card"><span class="icon icon-fill" style="font-size:2.25rem; color:var(--gold); display:block; margin-bottom:1rem">family_restroom</span><h4 style="font-weight:700; margin-bottom:.5rem">Familias</h4><p style="font-size:.85rem; color:var(--text-dim)">Quieres vacaciones perfectas sin pasarte semanas planificando cada detalle.</p></div>
+      <div class="reveal audience-card"><span class="icon icon-fill" style="font-size:2.25rem; color:var(--gold); display:block; margin-bottom:1rem">favorite</span><h4 style="font-weight:700; margin-bottom:.5rem">Parejas</h4><p style="font-size:.85rem; color:var(--text-dim)">Escapadas románticas, aniversarios o lunas de miel que necesitan ser impecables.</p></div>
+      <div class="reveal audience-card"><span class="icon icon-fill" style="font-size:2.25rem; color:var(--gold); display:block; margin-bottom:1rem">work</span><h4 style="font-weight:700; margin-bottom:.5rem">Ejecutivos</h4><p style="font-size:.85rem; color:var(--text-dim)">No tienes tiempo. Necesitas desconectar y que alguien se encargue de todo.</p></div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="marquee">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="icon icon-fill">flight_takeoff</span>Vuelos Premium</span>
+      <span class="marquee-item"><span class="icon icon-fill">hotel</span>Hoteles 5 Estrellas</span>
+      <span class="marquee-item"><span class="icon icon-fill">restaurant</span>Gastronomía Exclusiva</span>
+      <span class="marquee-item"><span class="icon icon-fill">verified</span>17 Años de Experiencia</span>
+      <span class="marquee-item"><span class="icon icon-fill">groups</span>+5,000 Viajeros Felices</span>
+      <span class="marquee-item"><span class="icon icon-fill">landscape</span>12 Destinos de Leyenda</span>
+      <span class="marquee-item"><span class="icon icon-fill">support_agent</span>Soporte 24/7</span>
+      <span class="marquee-item"><span class="icon icon-fill">shield</span>Safe Travels Certificado</span>
+      <span class="marquee-item"><span class="icon icon-fill">flight_takeoff</span>Vuelos Premium</span>
+      <span class="marquee-item"><span class="icon icon-fill">hotel</span>Hoteles 5 Estrellas</span>
+      <span class="marquee-item"><span class="icon icon-fill">restaurant</span>Gastronomía Exclusiva</span>
+      <span class="marquee-item"><span class="icon icon-fill">verified</span>17 Años de Experiencia</span>
+      <span class="marquee-item"><span class="icon icon-fill">groups</span>+5,000 Viajeros Felices</span>
+      <span class="marquee-item"><span class="icon icon-fill">landscape</span>12 Destinos de Leyenda</span>
+      <span class="marquee-item"><span class="icon icon-fill">support_agent</span>Soporte 24/7</span>
+      <span class="marquee-item"><span class="icon icon-fill">shield</span>Safe Travels Certificado</span>
+    </div>
+  </div>
+
+  <!-- Solution -->
+  <section class="section" id="solucion" style="background:rgba(5,11,22,.4); scroll-margin-top:5rem">
+    <div class="solution-grid">
+      <div class="reveal">
+        <h2 class="serif" style="font-size:clamp(1.75rem,4vw,2.75rem); font-weight:700; margin-bottom:2rem; line-height:1.15">Tu asistente <span class="shimmer" style="font-style:italic">personal</span> de viajes</h2>
+        <ul style="display:flex; flex-direction:column; gap:1.25rem">
+          <li style="display:flex; align-items:center; gap:.85rem; font-size:1.05rem"><span class="icon icon-fill" style="color:var(--gold)">check_circle</span>Acceso exclusivo a expertos</li>
+          <li style="display:flex; align-items:center; gap:.85rem; font-size:1.05rem"><span class="icon icon-fill" style="color:var(--gold)">check_circle</span>Acompañamiento 24/7</li>
+          <li style="display:flex; align-items:center; gap:.85rem; font-size:1.05rem"><span class="icon icon-fill" style="color:var(--gold)">check_circle</span>Gestión integral</li>
+        </ul>
+      </div>
+      <div class="solution-cards">
+        <div class="reveal solution-card glass"><div class="solution-icon"><span class="icon icon-fill" style="color:var(--gold); font-size:1.5rem">airplane_ticket</span></div><span class="label">Vuelos</span></div>
+        <div class="reveal solution-card glass"><div class="solution-icon"><span class="icon icon-fill" style="color:var(--gold); font-size:1.5rem">villa</span></div><span class="label">Hospedaje</span></div>
+        <div class="reveal solution-card glass"><div class="solution-icon"><span class="icon icon-fill" style="color:var(--gold); font-size:1.5rem">dining</span></div><span class="label">Gastronomía</span></div>
+        <div class="reveal solution-card glass"><div class="solution-icon"><span class="icon icon-fill" style="color:var(--gold); font-size:1.5rem">map</span></div><span class="label">Itinerario</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Steps -->
+  <section class="section-lg" id="proceso" style="scroll-margin-top:5rem">
+    <div style="max-width:72rem; margin:0 auto">
+      <h2 class="serif reveal text-center" style="font-size:clamp(2rem,4vw,3rem); font-weight:700; margin-bottom:6rem">El camino al <span class="shimmer" style="font-style:italic">paraíso</span></h2>
+      <div class="steps-grid">
+        <div class="step reveal"><span class="step-num serif">01</span><div class="step-content"><h4 class="serif">La Entrevista</h4><p>Escuchamos tus deseos y entendemos tu estilo para crear la base de tu aventura.</p></div></div>
+        <div class="step reveal"><span class="step-num serif">02</span><div class="step-content"><h4 class="serif">La Propuesta</h4><p>Diseñamos una experiencia a medida, optimizando cada detalle y reserva exclusiva.</p></div></div>
+        <div class="step reveal">
+          <span class="step-num serif">03</span>
+          <div class="step-content">
+            <h4 class="serif">El Viaje</h4>
+            <p>Tú solo llegas al aeropuerto. Nosotros nos encargamos de que todo sea perfecto.</p>
+            <div class="floating-card glass">
+              <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem">
+                <div style="width:2.5rem; height:2.5rem; border-radius:999px; background:rgba(242,195,107,.2); display:flex; align-items:center; justify-content:center"><span class="icon" style="color:var(--gold); font-size:.875rem">flight</span></div>
+                <div style="font-size:.625rem; text-transform:uppercase; letter-spacing:.15em; font-weight:700">Vuelo Confirmado</div>
+              </div>
+              <div style="font-size:.875rem; font-weight:600">Lima → Machu Picchu</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Itinerary -->
+  <section class="section" style="background:rgba(5,11,22,.5); scroll-margin-top:5rem">
+    <div style="max-width:72rem; margin:0 auto">
+      <div class="reveal text-center" style="margin-bottom:3rem">
+        <h2 class="serif" style="font-size:clamp(1.75rem,4vw,2.75rem); font-weight:700; margin-bottom:.75rem">Así se ve tu <span class="shimmer" style="font-style:italic">itinerario</span></h2>
+        <p style="color:var(--text-dim)">Un viaje real diseñado por nuestro equipo — Cusco 5 días</p>
+      </div>
+      <div class="itin-grid">
+        <div class="reveal itin-card glass"><div style="display:flex; align-items:center; gap:.6rem; margin-bottom:.75rem"><span class="day-badge">1</span><span style="font-size:.65rem; text-transform:uppercase; letter-spacing:.12em; font-weight:700; color:var(--text-dim)">Día 1</span></div><h5 style="font-weight:700; font-size:.95rem; margin-bottom:.4rem">Llegada a Cusco</h5><p style="font-size:.8rem; color:var(--text-dim); line-height:1.5">Traslado VIP al hotel · Check-in · Cena de bienvenida en restaurante de autor</p></div>
+        <div class="reveal itin-card glass"><div style="display:flex; align-items:center; gap:.6rem; margin-bottom:.75rem"><span class="day-badge">2</span><span style="font-size:.65rem; text-transform:uppercase; letter-spacing:.12em; font-weight:700; color:var(--text-dim)">Día 2</span></div><h5 style="font-weight:700; font-size:.95rem; margin-bottom:.4rem">Valle Sagrado</h5><p style="font-size:.8rem; color:var(--text-dim); line-height:1.5">Ollantaytambo · Salineras · Almuerzo gourmet con vista al valle</p></div>
+        <div class="reveal itin-card glass"><div style="display:flex; align-items:center; gap:.6rem; margin-bottom:.75rem"><span class="day-badge">3</span><span style="font-size:.65rem; text-transform:uppercase; letter-spacing:.12em; font-weight:700; color:var(--text-dim)">Día 3</span></div><h5 style="font-weight:700; font-size:.95rem; margin-bottom:.4rem">Machu Picchu</h5><p style="font-size:.8rem; color:var(--text-dim); line-height:1.5">Tren Vistadome · Guía privado · Fotos profesionales · Hotel de lujo</p></div>
+        <div class="reveal itin-card glass"><div style="display:flex; align-items:center; gap:.6rem; margin-bottom:.75rem"><span class="day-badge">4</span><span style="font-size:.65rem; text-transform:uppercase; letter-spacing:.12em; font-weight:700; color:var(--text-dim)">Día 4</span></div><h5 style="font-weight:700; font-size:.95rem; margin-bottom:.4rem">Cusco Colonial</h5><p style="font-size:.8rem; color:var(--text-dim); line-height:1.5">City tour privado · San Blas · Pisco sour class · Cena Pachapapa</p></div>
+      </div>
+      <div class="reveal" style="text-align:center; margin-top:2.5rem; display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center">
+        <span style="display:flex; align-items:center; gap:.5rem; font-size:.85rem; color:var(--text-dim)"><span class="icon" style="color:var(--gold)">schedule</span><strong style="color:#fff">+20 horas</strong> que no gastaste planificando</span>
+        <span style="display:flex; align-items:center; gap:.5rem; font-size:.85rem; color:var(--text-dim)"><span class="icon" style="color:var(--gold)">savings</span><strong style="color:#fff">Mejor precio</strong> por acceso directo</span>
+        <span style="display:flex; align-items:center; gap:.5rem; font-size:.85rem; color:var(--text-dim)"><span class="icon" style="color:var(--gold)">workspace_premium</span><strong style="color:#fff">Cotización gratis</strong> sin compromiso</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Destinations -->
+  <section id="destinos" style="padding:8rem 0; background:var(--bg-alt); scroll-margin-top:5rem">
+    <div class="reveal" style="padding:0 2rem; margin-bottom:4rem; display:flex; justify-content:space-between; align-items:flex-end; max-width:96rem; margin-left:auto; margin-right:auto; flex-wrap:wrap; gap:1rem">
+      <div>
+        <h2 class="serif" style="font-size:clamp(2rem,4vw,3rem); font-weight:700; margin-bottom:1rem">Destinos de <span class="shimmer" style="font-style:italic">Leyenda</span></h2>
+        <p style="color:var(--text-dim); font-size:1.125rem">Curamos lo mejor de Perú para ojos exigentes.</p>
+      </div>
+      <div class="carousel-arrows">
+        <button onclick="scrollDest(-1)"><span class="icon">chevron_left</span></button>
+        <button onclick="scrollDest(1)"><span class="icon">chevron_right</span></button>
+      </div>
+    </div>
+    <div id="dest-carousel" class="dest-carousel">
+      <div class="dest-card"><img loading="lazy" src="https://assets.cdn.filesafe.space/Svysro4eHjQk9vN7j8oe/media/69c6c49031ffeb8c56e5ecdd.jpg" alt="Machu Picchu" /><div class="overlay"></div><div class="info"><h4 class="serif">Machu Picchu</h4><p>Donde el cielo toca la tierra</p><a href="#" onclick="openPopup();return false">Quiero ir</a></div></div>
+      <div class="dest-card"><img loading="lazy" src="https://assets.cdn.filesafe.space/Svysro4eHjQk9vN7j8oe/media/69c6c49231ffeb0094e5ed5f.png" alt="Cusco" /><div class="overlay"></div><div class="info"><h4 class="serif">Cusco</h4><p>El corazón del imperio</p><a href="#" onclick="openPopup();return false">Quiero ir</a></div></div>
+      <div class="dest-card"><img loading="lazy" src="https://assets.cdn.filesafe.space/Svysro4eHjQk9vN7j8oe/media/69c6c4907115eae7f5b6cd0c.jpg" alt="Máncora" /><div class="overlay"></div><div class="info"><h4 class="serif">Máncora</h4><p>Arena, sol y mar sin fin</p><a href="#" onclick="openPopup();return false">Quiero ir</a></div></div>
+      <div class="dest-card"><img loading="lazy" src="https://assets.cdn.filesafe.space/Svysro4eHjQk9vN7j8oe/media/69c6c4925eea8383943e18c7.png" alt="Paracas" /><div class="overlay"></div><div class="info"><h4 class="serif">Paracas</h4><p>Donde el desierto abraza el océano</p><a href="#" onclick="openPopup();return false">Quiero ir</a></div></div>
+    </div>
+    <div style="padding:0 2rem">
+      <div class="progress-bar"><div id="carousel-progress" class="progress-fill"></div></div>
+    </div>
+  </section>
+
+  <!-- Comparison -->
+  <section class="section" id="comparacion" style="scroll-margin-top:5rem">
+    <div class="container-sm text-center reveal" style="margin-bottom:2.5rem">
+      <h2 class="serif" style="font-size:clamp(1.5rem,3.5vw,2.25rem); font-weight:700; margin-bottom:.5rem">La <span class="shimmer" style="font-style:italic">diferencia</span> es clara</h2>
+      <p style="color:var(--text-dim); font-size:.95rem">Compara cómo viajan los que nos eligen.</p>
+    </div>
+    <div class="compare-grid">
+      <div class="reveal compare-basic">
+        <span class="icon" style="font-size:2rem; color:#334155; margin-bottom:.75rem; display:block">cancel</span>
+        <h4 class="serif" style="font-size:1.1rem; font-weight:700; margin-bottom:1rem; color:#64748b">Sin Nosotros</h4>
+        <ul style="display:flex; flex-direction:column; gap:.7rem">
+          <li><span class="icon" style="color:rgba(127,29,29,.4); font-size:.9rem">close</span> Horas buscando vuelos</li>
+          <li><span class="icon" style="color:rgba(127,29,29,.4); font-size:.9rem">close</span> Incertidumbre total</li>
+          <li><span class="icon" style="color:rgba(127,29,29,.4); font-size:.9rem">close</span> Estrés de última hora</li>
+          <li><span class="icon" style="color:rgba(127,29,29,.4); font-size:.9rem">close</span> Restaurantes al azar</li>
+          <li><span class="icon" style="color:rgba(127,29,29,.4); font-size:.9rem">close</span> Sorpresas desagradables</li>
+        </ul>
+      </div>
+      <div class="reveal compare-premium">
+        <span class="compare-badge">RECOMENDADO</span>
+        <span class="icon icon-fill" style="font-size:2rem; color:var(--gold); margin-bottom:.5rem; display:block">verified</span>
+        <h4 class="serif" style="font-size:1.25rem; font-weight:700; margin-bottom:1rem; color:var(--gold)">Gestión Premium</h4>
+        <ul style="display:flex; flex-direction:column; gap:.65rem">
+          <li><span class="icon icon-fill" style="color:var(--gold)">check_circle</span> Todo organizado por expertos</li>
+          <li><span class="icon icon-fill" style="color:var(--gold)">check_circle</span> Itinerario optimizado día a día</li>
+          <li><span class="icon icon-fill" style="color:var(--gold)">check_circle</span> 0% estrés</li>
+          <li><span class="icon icon-fill" style="color:var(--gold)">check_circle</span> Mejores restaurantes reservados</li>
+          <li><span class="icon icon-fill" style="color:var(--gold)">check_circle</span> Hoteles verificados</li>
+        </ul>
+        <a href="#" onclick="openPopup();return false" class="btn btn-gold btn-sm" style="margin-top:1.5rem">Quiero mi viaje</a>
+        <p style="margin-top:.75rem; font-size:.7rem; color:var(--text-dim); opacity:.7; display:flex; align-items:center; justify-content:center; gap:.3rem"><span class="icon" style="font-size:.75rem; color:var(--gold)">lock</span>Sin compromiso · Respuesta al instante</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonios" style="padding:6rem 0; scroll-margin-top:5rem">
+    <div class="container-sm text-center" style="margin-bottom:2rem">
+      <h3 class="serif reveal" style="font-size:clamp(1.5rem,4vw,2.5rem); font-weight:700; margin-bottom:1rem">Lo que dicen nuestros <span class="shimmer" style="font-style:italic">viajeros</span></h3>
+      <p class="reveal" style="color:var(--text-dim)">Historias reales de experiencias extraordinarias</p>
+    </div>
+    <div class="testi-wrap">
+      <div class="testi-track">
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Les pasé las fechas y el presupuesto, y en 3 días tenía vuelos, hotel y hasta los restaurantes reservados. Cero estrés."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Carlos R.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Cusco · Familia · 2025</div></div>
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Trabajo remoto y viajo seguido. Ya no pierdo tiempo buscando hospedajes, ellos arman todo y yo solo llego."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Miguel G.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Arequipa · Pareja · 2025</div></div>
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Les escribí un martes, el viernes ya tenía mi viaje completo."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Lucía P.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Lima · Negocios · 2024</div></div>
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Queríamos algo especial para nuestro aniversario y nos consiguieron una suite con vista al mar que ni sabíamos que existía."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Andrea S.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Máncora · Pareja · 2025</div></div>
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Mis papás nunca habían viajado así. Lloraron de emoción al llegar al hotel. Gracias High Tours."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Roberto M.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Paracas · Familia · 2024</div></div>
+        <!-- Duplicate for loop -->
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Les pasé las fechas y el presupuesto, y en 3 días tenía vuelos, hotel y hasta los restaurantes reservados. Cero estrés."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Carlos R.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Cusco · Familia · 2025</div></div>
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Trabajo remoto y viajo seguido. Ya no pierdo tiempo buscando hospedajes, ellos arman todo y yo solo llego."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Miguel G.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Arequipa · Pareja · 2025</div></div>
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Les escribí un martes, el viernes ya tenía mi viaje completo."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Lucía P.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Lima · Negocios · 2024</div></div>
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Queríamos algo especial para nuestro aniversario y nos consiguieron una suite con vista al mar que ni sabíamos que existía."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Andrea S.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Máncora · Pareja · 2025</div></div>
+        <div class="testi-card"><div class="testi-stars"><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span><span class="icon icon-fill">star</span></div><blockquote class="serif">"Mis papás nunca habían viajado así. Lloraron de emoción al llegar al hotel. Gracias High Tours."</blockquote><div style="font-weight:700; font-size:.9rem; margin-bottom:.2rem">Roberto M.</div><div style="font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase">Paracas · Familia · 2024</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="reveal" style="max-width:80rem; margin:0 auto; padding:0 2rem; margin-bottom:5rem">
+    <div class="stats-grid glass">
+      <div class="stat"><div class="num serif" data-count="17" data-suffix=" años">0 años</div><div class="label">Experiencia</div></div>
+      <div class="stat"><div class="num serif" data-count="5000" data-suffix="+">0+</div><div class="label">Viajeros</div></div>
+      <div class="stat"><div class="num serif" data-count="12" data-suffix="">0</div><div class="label">Destinos</div></div>
+      <div class="stat"><span class="icon icon-fill" style="color:var(--gold); font-size:1.875rem; margin-bottom:.5rem; display:block">verified_user</span><div class="label">Safe Travels</div></div>
+    </div>
+  </div>
+
+  <!-- Guarantee -->
+  <section class="section" style="background:linear-gradient(180deg,var(--bg),rgba(5,11,22,.6)); scroll-margin-top:5rem">
+    <div class="reveal container-xs text-center">
+      <span class="icon icon-fill" style="font-size:3rem; color:var(--gold); display:block; margin-bottom:1rem">verified_user</span>
+      <h2 class="serif" style="font-size:clamp(1.5rem,3.5vw,2.25rem); font-weight:700; margin-bottom:1rem">Garantía de <span class="shimmer" style="font-style:italic">tranquilidad</span> total</h2>
+      <p style="font-size:1.05rem; color:var(--text-dim); line-height:1.75; margin-bottom:2rem; max-width:38rem; margin-left:auto; margin-right:auto">Si la propuesta que diseñamos no te convence, <strong style="color:#fff">no pagas absolutamente nada</strong>. Sin letra chica. Sin presiones. Cero riesgo.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center">
+        <span style="display:flex; align-items:center; gap:.5rem; font-size:.85rem; font-weight:600"><span class="icon icon-fill" style="color:var(--gold)">check_circle</span>Cotización 100% gratis</span>
+        <span style="display:flex; align-items:center; gap:.5rem; font-size:.85rem; font-weight:600"><span class="icon icon-fill" style="color:var(--gold)">check_circle</span>Sin cargos ocultos</span>
+        <span style="display:flex; align-items:center; gap:.5rem; font-size:.85rem; font-weight:600"><span class="icon icon-fill" style="color:var(--gold)">check_circle</span>Cancela cuando quieras</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq" style="scroll-margin-top:5rem">
+    <div class="container-xs">
+      <h2 class="serif reveal text-center" style="font-size:clamp(1.5rem,3.5vw,2.25rem); font-weight:700; margin-bottom:3rem">Preguntas <span class="shimmer" style="font-style:italic">frecuentes</span></h2>
+      <div style="display:flex; flex-direction:column; gap:.75rem">
+        <details class="reveal faq-item"><summary class="faq-q"><span>¿Cuánto cuesta el servicio?</span><span class="icon faq-icon">expand_more</span></summary><div class="faq-a"><p>Depende del destino, duración y nivel de personalización. La cotización es <strong>100% gratuita</strong> y sin compromiso.</p></div></details>
+        <details class="reveal faq-item"><summary class="faq-q"><span>¿En cuánto tiempo recibo mi propuesta?</span><span class="icon faq-icon">expand_more</span></summary><div class="faq-a"><p>Normalmente en <strong>24 a 48 horas</strong>. Para viajes urgentes, podemos tener todo listo el mismo día.</p></div></details>
+        <details class="reveal faq-item"><summary class="faq-q"><span>¿Puedo personalizar todo el itinerario?</span><span class="icon faq-icon">expand_more</span></summary><div class="faq-a"><p>Absolutamente. Cada viaje se diseña <strong>100% a tu medida</strong>: destinos, hoteles, restaurantes, actividades y ritmo.</p></div></details>
+        <details class="reveal faq-item"><summary class="faq-q"><span>¿Qué pasa si surge un problema durante el viaje?</span><span class="icon faq-icon">expand_more</span></summary><div class="faq-a"><p>Tienes <strong>soporte 24/7</strong> por WhatsApp. Cualquier emergencia, nosotros lo resolvemos en tiempo real.</p></div></details>
+        <details class="reveal faq-item"><summary class="faq-q"><span>¿Solo organizan viajes dentro de Perú?</span><span class="icon faq-icon">expand_more</span></summary><div class="faq-a"><p>Nuestra especialidad es Perú, pero también organizamos experiencias en <strong>destinos internacionales</strong>.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="bg"><img loading="lazy" src="https://assets.cdn.filesafe.space/Svysro4eHjQk9vN7j8oe/media/69c6c4942e89d81f225490c4.jpg" alt="Travel" /></div>
+    <div class="reveal text-center" style="position:relative; z-index:2; max-width:56rem; margin:0 auto">
+      <h2 class="serif" style="font-size:clamp(2.25rem,5.5vw,4rem); font-weight:700; margin-bottom:1.25rem; line-height:1.12">Tu próximo <span class="shimmer" style="font-style:italic">viaje</span> está a un mensaje de distancia</h2>
+      <p style="font-size:1.1rem; color:var(--text-dim); margin-bottom:2.5rem; line-height:1.7; max-width:40rem; margin-left:auto; margin-right:auto">Escríbenos y te respondemos al instante · Sin compromiso · Soporte 24/7</p>
+      <a href="#" onclick="openPopup();return false" class="btn btn-gold" style="font-size:1.15rem; padding:1.25rem 3rem">Quiero mi viaje</a>
+      <div style="margin-top:1.5rem; display:flex; align-items:center; justify-content:center; gap:.75rem; flex-wrap:wrap">
+        <div class="avatar-stack">
+          <div class="avatar" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark)); color:var(--on-gold); width:1.8rem; height:1.8rem; font-size:.55rem">CR</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#afcbff,#7b9dd4); color:var(--bg); width:1.8rem; height:1.8rem; font-size:.55rem">MG</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#c4b5fd,#8b5cf6); color:#fff; width:1.8rem; height:1.8rem; font-size:.55rem">LP</div>
+        </div>
+        <span style="font-size:.75rem; color:var(--text-dim)">+5,000 viajeros ya vivieron la experiencia</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WhatsApp Float -->
+  <a id="wa-float" href="#" onclick="openPopup();return false" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- Sticky Mobile CTA -->
+  <div id="sticky-cta">
+    <a href="#" onclick="openPopup();return false" class="gold-gradient">Escríbenos</a>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="inner">
+      <img loading="lazy" src="https://assets.cdn.filesafe.space/Svysro4eHjQk9vN7j8oe/media/69c7027d2e89d878b35b98e8.png" alt="High Tours" />
+      <div>
+        <p style="color:#94a3b8; font-size:.875rem; margin-bottom:.5rem">© 2008–2026 High Tours · ORUS GROUP SAC · Huánuco, Perú</p>
+        <p style="color:#64748b; font-size:.875rem; font-weight:500">concierge@hightours.com · +51 987 654 321</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    function reveal() {
+      document.querySelectorAll('.reveal:not(.active)').forEach(function(el) {
+        if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('active');
+      });
+    }
+    window.addEventListener('scroll', reveal);
+    reveal();
+
+    // Nav scroll
+    window.addEventListener('scroll', function() {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Mobile menu
+    function toggleMenu() {
+      var m = document.getElementById('mobile-menu');
+      var open = m.classList.toggle('open');
+      document.querySelector('.nav-toggle .icon').textContent = open ? 'close' : 'menu';
+    }
+    function closeMenu() { document.getElementById('mobile-menu').classList.remove('open'); document.querySelector('.nav-toggle .icon').textContent = 'menu'; }
+    window.addEventListener('resize', function() { if (window.innerWidth >= 1180) closeMenu(); });
+
+    // Form popup
+    function openPopup() { document.getElementById('form-popup').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closePopup() { document.getElementById('form-popup').classList.remove('open'); document.body.style.overflow = ''; }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePopup(); });
+
+    // Carousel
+    var carousel = document.getElementById('dest-carousel');
+    function scrollDest(dir) {
+      var card = carousel.querySelector('.dest-card');
+      if (card) carousel.scrollBy({ left: dir * (card.offsetWidth + 32), behavior: 'smooth' });
+    }
+    carousel.addEventListener('scroll', function() {
+      var max = carousel.scrollWidth - carousel.clientWidth;
+      var pct = max > 0 ? carousel.scrollLeft / max : 0;
+      document.getElementById('carousel-progress').style.width = Math.max(25, pct * 100) + '%';
+    });
+
+    // Stats count-up
+    var statsObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (!e.isIntersecting) return;
+        var el = e.target, target = parseInt(el.dataset.count), suffix = el.dataset.suffix || '', cur = 0, step = Math.ceil(target / 50);
+        var t = setInterval(function() { cur += step; if (cur >= target) { el.textContent = target.toLocaleString() + suffix; clearInterval(t); } else el.textContent = cur.toLocaleString() + suffix; }, 30);
+        statsObs.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-count]').forEach(function(el) { statsObs.observe(el); });
+
+    // Typewriter
+    (function() {
+      var phrases = ['Cusco · Machu Picchu · Máncora · Paracas', 'Vuelos + Hoteles + Restaurantes + Itinerario', 'Un WhatsApp y todo listo', '0% estrés, solo maleta y pasaporte'];
+      var el = document.getElementById('typewriter'); if (!el) return;
+      var pi = 0, ci = 0, del = false, pause = 0;
+      function tick() {
+        var cur = phrases[pi];
+        if (!del) { el.textContent = cur.substring(0, ++ci); pause = ci === cur.length ? 2000 : 45; if (ci === cur.length) del = true; }
+        else { el.textContent = cur.substring(0, --ci); if (ci === 0) { del = false; pi = (pi + 1) % phrases.length; pause = 400; } else pause = 25; }
+        setTimeout(tick, pause);
       }
-      a {
-        color: #f2c36b;
-      }
-    </style>
-  </head>
-  <body>
-    <p>Redirigiendo a la landing. Si no sucede, abre <a href="/hightours-ghl.html">/hightours-ghl.html</a>.</p>
-  </body>
+      tick();
+    })();
+
+    // Scroll progress
+    window.addEventListener('scroll', function() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      document.getElementById('scroll-bar').style.width = (window.scrollY / h * 100) + '%';
+    });
+
+    // Sticky CTA
+    (function() {
+      var bar = document.getElementById('sticky-cta'), hero = document.getElementById('inicio');
+      if (!bar || !hero) return;
+      window.addEventListener('scroll', function() { bar.classList.toggle('visible', window.scrollY > hero.offsetHeight - 100); });
+    })();
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); closeMenu(); }
+      });
+    });
+
+    // Auto popup after 40s
+    var popupShown = false;
+    setTimeout(function() { if (!popupShown) { popupShown = true; openPopup(); } }, 40000);
+  </script>
+</body>
 </html>
