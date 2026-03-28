@@ -1746,9 +1746,10 @@
       }
 
       #inicio {
-        padding-left: 4rem;
-        padding-right: 4rem;
-        padding-top: 8rem
+        padding-left: 4rem !important;
+        padding-right: 4rem !important;
+        padding-top: 8rem !important;
+        padding-bottom: 2rem !important
       }
 
       #nosotros,
@@ -1901,9 +1902,10 @@
 
       /* Nav & Hero */
       #inicio {
-        padding-top: 6rem;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem
+        padding-top: 6rem !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+        padding-bottom: 2rem !important
       }
 
       .topbar {
@@ -2221,6 +2223,67 @@
       #audience-grid {
         grid-template-columns: 1fr !important;
         gap: 0.75rem !important
+      }
+    }
+
+    @media(min-width:768px) and (max-width:991px) {
+      #pain-grid,
+      #solution-grid,
+      #comparison-grid {
+        grid-template-columns: 1fr !important
+      }
+
+      #pain-sticky {
+        position: static !important
+      }
+
+      #steps-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 2rem !important
+      }
+
+      #step-2 {
+        margin-top: 0 !important
+      }
+
+      .destination-card {
+        min-width: calc(72vw - 1rem) !important;
+        height: 360px !important
+      }
+
+      #premium-card {
+        transform: none !important
+      }
+
+      #testimonials-flex {
+        flex-direction: column !important
+      }
+
+      #test-side-1,
+      #test-side-2,
+      #test-center {
+        width: 100% !important;
+        transform: none !important
+      }
+
+      #stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important
+      }
+
+      #stat-destinos,
+      #stat-safe {
+        border-left: none !important
+      }
+    }
+
+    @media(max-width:560px) {
+      #solution-cards {
+        grid-template-columns: 1fr !important
+      }
+
+      .destination-card {
+        min-width: calc(100vw - 3rem) !important;
+        height: 280px !important
       }
     }
 
